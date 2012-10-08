@@ -1,0 +1,18 @@
+gen:
+sml:
+  -
+    label: Titolo (%s)
+    label_class: control-label
+    nome: title
+    id: title
+    class: input-xlarge
+    type: text
+    str: <input type="text" class="%s" id="%s"  name="%s" value="%s" >
+  -
+    label: Descrizione (%s)
+    label_class: control-label
+    nome: description
+    id: description
+    class: input-xlarge editor
+    type: text
+    str: <textarea class="%s" id="%s" name="%s" >%s</textarea>

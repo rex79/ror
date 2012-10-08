@@ -1,0 +1,29 @@
+<%= f.hidden_field :fkparent, :value => "2" %>
+
+<div class="control-group">
+	<%= f.label "Nome" %>
+	<div class="controls">
+		<%= f.text_field :nome %>
+	</div>
+</div>
+
+<div class="control-group">
+	<%= f.label "Label" %>
+	<div class="controls">
+		<%= f.text_field :label %>
+	</div>
+</div>
+
+<div class="control-group">
+	<%= f.label "Attivo" %>
+	<div class="controls">
+		<%= f.check_box :enabled %>
+	</div>
+</div>
+
+<div class="control-group">
+	<%= f.label "Sottocategorie disabilitate" %>
+	<div class="controls">
+		<%= f.check_box :skip_cat %>
+	</div>
+</div>

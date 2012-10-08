@@ -1,0 +1,55 @@
+<%= f.hidden_field :fkparent, :value => @id_parent %>
+<%= f.hidden_field :idserv, :value => @servizio.id %>
+
+<ul id="tabs" class="nav nav-tabs">
+	<% @lingue.each do |lingua| %>
+		<li class="<%= "active" if lingua.cod.eql?('it') %>"><a href="#<%= lingua.cod %>"><%= lingua.lingua %></a></li>
+	<% end %>
+</ul>
+	<div class="tab-content">
+	<% @lingue.each do |lingua| %>
+
+		<% ele = @sml[lingua.cod] %>
+
+		<div id="<%= lingua.cod %>" class="tab-pane <%= "active" if lingua.cod.eql?('it') %>">
+
+			<div class="control-group">
+				<label for="<%= lingua.cod %>_titolo" class="control-label">Titolo (<%= lingua.cod %>)</label>
+				<div class="controls">
+					<input type="text" name="<%= lingua.cod %>[title]" id="<%= lingua.cod %>_titolo" class="input-xlarge" value="<%= ele.title unless ele.nil? %>">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label for="<%= lingua.cod %>_header" class="control-label">Abstract (<%= lingua.cod %>)</label>
+				<div class="controls">
+					<textarea name="<%= lingua.cod %>[abstract]" id="<%= lingua.cod %>_abstract" class="input-xlarge"><%= ele.abstract unless ele.nil? %></textarea>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label for="<%= lingua.cod %>_testo" class="control-label">Testo (<%= lingua.cod %>)</label>
+				<div class="controls">
+					<textarea name="<%= lingua.cod %>[description]" id="<%= lingua.cod %>_description" class="input-xlarge editor"><%= ele.description unless ele.nil? %></textarea>
+				</div>
+			</div>
+
+		</div>
+	<% end %>
+</div>
+
+
+<script type="text/javascript">
+
+$(window).ready(function() {
+	$(".editor").kendoEditor({
+		encoded:false
+	});
+
+	$('#tabs a').click(function (e) {
+  	e.preventDefault();
+  	$(this).tab('show');	
+	});
+
+});
+</script>

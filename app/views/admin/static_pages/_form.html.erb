@@ -1,0 +1,77 @@
+<div class="row-fluid">
+	<div class="span9">
+		<div class="control-group">
+			<label for="static_image" class="control-label">Immagine Principale</label>
+			<div class="controls">
+				<%= f.file_field :foto %>
+				<br/><br/>
+				<%= (image_tag @static.foto_url(:thumb)) if !@static.foto_url(:thumb).nil? %>
+				<br>
+				<% unless @static.foto_url(:thumb).nil? %>
+					<label class="checkbox"><%= f.check_box :remove_foto %> Elimina immagine</label>
+				<% end %>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<%= f.label "Indirizzo della pagina" %>
+			<div class="controls">
+				<%= f.text_field :url_pagina, :class => "input-xlarge" %>
+			</div>
+		</div>
+
+		<div class="control-group">
+			<%= f.label "Visibile in home page" %>
+			<div class="controls">
+				<%= f.check_box :home_page %>
+			</div>
+		</div>
+
+		<ul id="tabs" class="nav nav-tabs">
+			<% @lingue.each do |lingua| %>
+				<li class="<%= "active" if lingua.cod.eql?('it') %>"><a href="#<%= lingua.cod %>"><%= lingua.lingua %></a></li>
+			<% end %>
+		</ul>
+		<div class="tab-content">
+			<% @lingue.each do |lingua| %>
+
+				<% ele = @sml[lingua.cod] %>
+
+				<div id="<%= lingua.cod %>" class="tab-pane <%= "active" if lingua.cod.eql?('it') %>">
+
+					<div class="control-group">
+						<label for="<%= lingua.cod %>_titolo" class="control-label">Titolo (<%= lingua.cod %>)</label>
+						<div class="controls">
+							<input type="text" name="<%= lingua.cod %>[title]" id="<%= lingua.cod %>_titolo" class="input-xlarge" value="<%= ele.title unless ele.nil? %>">
+						</div>
+					</div>
+
+					<div class="control-group">
+						<label for="<%= lingua.cod %>_testo" class="control-label">Testo (<%= lingua.cod %>)</label>
+						<div class="controls">
+							<textarea name="<%= lingua.cod %>[testo]" id="<%= lingua.cod %>_testo" class="input-xlarge editor"><%= ele.testo unless ele.nil? %></textarea>
+						</div>
+					</div>
+
+				</div>
+			<% end %>
+		</div>
+	</div>
+
+	<%= render 'admin/partials/mod_manager' %>
+</div>
+<script type="text/javascript">
+
+$(window).ready(function() {
+	$(".editor").kendoEditor({
+		encoded:false
+	});
+
+	$('#tabs a').click(function (e) {
+  	e.preventDefault();
+  	$(this).tab('show');	
+	});
+
+});
+</script>
+	

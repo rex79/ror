@@ -1,0 +1,103 @@
+<ul class="breadcrumb">
+  <li>
+    <%= link_to "Media", admin_media_path %><span class="divider"></span>
+  </li>
+</ul>
+<div class="row-fluid">
+  <div class="span9">
+  	<h3 style="margin-bottom:5px;">&nbsp;</h3>
+  	<ul class="thumbnails">
+  		<% @all_files.each do |file| %>
+  		<li class="span2">
+  			<a rel="popover" href="#" id="image-<%= file.id %>" data-content='<%= image_tag file.filename_url(:macro) %>'>
+	  			<div class="thumbnail">
+	  				<%= image_tag file.filename_url(:micro), :class => "img-polaroid" %>
+	  				<br>
+	  				<input type="checkbox" name="rimuovi" value="<%= file.id %>" />
+	  			</div>
+  			</a>
+  		</li>
+  		<% end %>
+  	</ul>
+
+  </div>
+
+  <div class="span3">
+  	<h3 style="text-align:right;margin-bottom:5px;">Gestione Media</h3>
+    <ul class="nav nav-tabs nav-stacked">
+      <li><%= link_to raw("<i class='icon-plus'></i> Aggiungi media"), "#", :id => "add-file" %></li>
+      <li><%= link_to raw("<i class='icon-remove'></i> Elimina selezionati"), "#", :id => "del-selected" %></li>
+    </ul>
+  </div>
+</div>
+
+<!--
+	MODAL DIALOG FOR UPLOAD FILE
+-->
+<div class="modal hide fade" id="upload-modal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4>Carica nuovo media</h4>
+  </div>
+  <div class="modal-body">
+    <p>
+    	Clicca sul pulsante qui sotto per caricare i tuoi file.
+    	<br/>
+    	<%= form_for "media", :url => { :controller => "media", :action => "create" }, :html => {:id => "form", :class => "form-horizontal", :multipart => true} do |f| %>
+    		<%= f.file_field :filename %>
+    	<% end %>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+  </div>
+</div>
+<!--
+	END MODAL DIALOG FOR UPLOAD FILE
+-->
+
+
+
+<script type="text/javascript">
+  function onComplete(e) {
+  	document.location = "/admin/media";
+  }
+
+  $(document).ready(function() {
+  	$("a[id^='image-']").popover({
+  		animation: true,
+  		placement: 'right',
+  		trigger: 'hover'
+  	});
+
+  	$("#media_filename").kendoUpload({
+  		async: {
+  			saveUrl: '/admin/media/',
+  			removeUrl: '/admin/media/remove',
+  			autoUpload: true
+  		},
+  		complete: onComplete
+  	});
+		
+  	$("#upload-modal").modal('hide')
+  	$("#add-file").click(function() {
+  		$("#upload-modal").modal('show');
+  	});
+
+
+    $("#del-selected").click(function() {
+      if (window.confirm("Eliminare tutti i media selezionati?")) {
+        var delete_elements = new Array();
+        var result = $('input').each(function(){
+          if ( $(this).is(":checked") ) {
+            delete_elements.push($(this).val());
+          }
+        });
+        var string_result = delete_elements.join(",");
+        $.post("/admin/media/destroyall", { id: ""+ string_result +""}, function(txt) {
+          document.location = "/admin/media";
+        });
+      }
+    });
+  });
+</script>

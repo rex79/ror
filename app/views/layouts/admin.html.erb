@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= full_title(yield(:title)) %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+    <%= stylesheet_link_tag    "admin/admin", media: "all" %>
+    <%= javascript_include_tag "admin/application" %>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+    <%= csrf_meta_tags %>
+    <%= render 'admin/partials/shims' %>
+  </head>
+  <body>
+      
+    <%= render 'admin/partials/header' %>
+
+    <div class="container-fluid">
+      <% flash.each do |key, value| %>
+        <%= content_tag(:div, value, class: "alert alert-#{key}") %>
+      <% end %>
+      
+      <%= yield %>
+
+      <%= render 'admin/partials/footer' %>
+
+      <%= debug(params) if Rails.env.development? %>
+
+    </div>
+
+  </body>
+</html>

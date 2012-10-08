@@ -1,0 +1,90 @@
+<ul class="breadcrumb">
+  <li>
+    <%= link_to "#{@servizio.label}", @servizio.path %><span class="divider"> > </span>
+  </li>
+<% if @id_parent != 0 %>
+  <%= raw breadcrumb(@id_parent) %>
+<% end %>
+</ul>
+
+<div class="row-fluid">
+  <div class="span9">
+    <% unless @categoria.nil? %>
+      <h3 style="text-align:right;margin-bottom:5px;">Elenco Categorie <%= @categoria.sml.where("fklang=?", "it").first.title %></h3>
+    <% else %>
+      <h3 style="text-align:right;margin-bottom:5px;">Elenco Categorie <%= @servizio.label %></h3>
+    <% end %>
+    <table class="table table-striped table-bordered table-condensed admin-table" id="sort">
+      <thead>
+        <th width="5%">#</th>
+        <th width="45%"><%= @servizio.label %></th>
+        <% if @servizio.skip_cat != 1 %>
+          <th width="20%" style="text-align:center">Sotto categorie</th>
+        <% end %>
+        <th width="10%">Elementi</th>
+        <th width="20%" style="text-align: center" colspan="2">Operazioni</th>
+      </thead>
+      <tbody>
+        <% @modules_cat.each do |mod| %>
+        <% ico = (mod.child.count > 0) ? "icon-file" : "icon-plus" %>
+        <tr id="<%= mod.id %>">
+          <td><a href="#" style="cursor:hand"><span class="icon-move"></span></a></td>
+          <td><%= get_element_title mod %></td>
+          <% if @servizio.skip_cat != 1 %>
+            <td style="text-align:center"><%= link_to raw("<i class='icon-folder-open'></i>"), "/admin/mods?idserv=#{@servizio.id}&idp=#{mod.id}", :title => "visualizza sottocategorie di #{get_element_title mod}" %></td>
+          <% end %>
+          <td style="text-align:center">
+            <%= link_to raw("<i class='#{ico}'></i>"), "/admin/mods/list?idserv=#{@servizio.id}&idc=#{mod.id}", :title => "visualizza elementi di #{get_element_title mod}" %>
+          </td>
+          <td style="text-align:center">
+            <%= link_to raw("<i class='icon-edit'></i>"), "/admin/mods/editcat?idserv=#{@servizio.id}&id=#{mod.id}", :rel => "operazioni_#{mod.id}", :title => "Modifica #{get_element_title mod}" %>
+            <%= link_to raw("<i class='icon-trash'></i>"), "/admin/mods/destroycat?idserv=#{@servizio.id}&id=#{mod.id}", :rel => "operazioni_#{mod.id}", :title => "Elimina #{get_element_title mod}", method: :delete, data: { confirm: "Sei sicuro di voler eliminare #{get_element_title mod}?" }  %>
+            <%= link_to raw("<i class='#{find_published mod}'></i>"), "/admin/mods/publishedcat?idserv=#{@servizio.id}&id=#{mod.id}", :rel => "operazioni_#{mod.id}", :title => "Sospendi/Attiva #{get_element_title mod}" %>
+          </td>
+          <td style="text-align:center"><input type="checkbox" name="del[<%= mod.id %>]" value="<%= mod.id %>"></td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="span3">
+    <% unless @categoria.nil? %>
+      <h3 style="text-align:right;margin-bottom:5px;">Gestione Categorie <%= @categoria.sml.where("fklang=?", "it").first.title %></h3>
+      <ul class="nav nav-tabs nav-stacked">
+        <li><%= link_to raw("<i class='icon-plus'></i> Aggiungi categoria"), "/admin/mods/addcat?idserv=#{@servizio.id}&idp=#{@id_parent}" %></li>
+        <li><%= link_to raw("<i class='icon-remove'></i> Elimina selezionati"), "#", :id => "del-selected" %></li>
+        <li><%= link_to raw("<i class='icon-file'></i> Visualizza elementi #{@categoria.sml.where("fklang=?", "it").first.title}"), "/admin/mods/list?idserv=#{@servizio.id}&idc=#{@categoria.id}" %></li>
+      </ul>
+    <% else %>
+      <h3 style="text-align:right;margin-bottom:5px;">Gestione Categorie <%= @servizio.label %></h3>
+      <ul class="nav nav-tabs nav-stacked">
+        <li><%= link_to raw("<i class='icon-plus'></i> Aggiungi categoria"), "/admin/mods/addcat?idserv=#{@servizio.id}&idp=#{@id_parent}" %></li>
+        <li><%= link_to raw("<i class='icon-remove'></i> Elimina selezionati"), "#", :id => "del-selected" %></li>
+        <li><%= link_to raw("<i class='icon-file'></i> Visualizza elementi #{@servizio.label}"), "/admin/mods/list?idserv=#{@servizio.id}" %></li>
+      </ul>
+    <% end %>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("a[rel^='operazioni']").tooltip({'placement':'left'});
+
+
+    $("#del-selected").click(function() {
+      if (window.confirm("Eliminare tutte le categorie selezionate e le loro sottocategorie?")) {
+        var delete_elements = new Array();
+        var result = $('input').each(function(){
+          if ( $(this).is(":checked") ) {
+            delete_elements.push($(this).val());
+          }
+        });
+        var string_result = delete_elements.join(",");
+        
+        $.post("/admin/mods/deleteallcat", { id: ""+ string_result +""}, function(txt) {
+          document.location = "/admin/mods?idserv=<%= @servizio.id %>&idp=<%= @id_parent %>";
+        });
+        
+      }
+    });
+  });
+</script>

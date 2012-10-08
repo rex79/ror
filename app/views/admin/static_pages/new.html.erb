@@ -1,0 +1,31 @@
+<script type="text/javascript">
+	$(document).ready(function() {
+		//$("#tabs").tab('show');
+	});
+</script>
+<ul class="breadcrumb">
+  <li>
+    <%= link_to "Pagine Statiche", admin_static_pages_path %>
+    <span class="divider"></span>
+    Inserimento / Modifica
+  </li>
+</ul>
+
+<div class="row-fluid">
+	<div class="span12">
+		
+		<%= form_for [:admin, @static], :html => {:id => "form", :class => "form-horizontal", :multipart => true} do |f| %>
+
+			<%= render :partial => 'admin/static_pages/form', :locals => { :f => f } %>
+
+			<div class="span12">
+				<div class="form-actions">
+					<%= f.submit "save", :class => "btn btn-primary" %>
+					<%= f.submit "cancel", :class => "btn" %>
+				</div>	
+			</div>
+
+		<% end %>
+		
+	</div>
+</div>

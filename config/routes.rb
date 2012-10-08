@@ -1,58 +1,52 @@
 InternalConsulting::Application.routes.draw do
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
 
-  # Sample of regular route:
-  #   match 'products/:id' => 'catalog#view'
-  # Keep in mind you can assign values other than :controller and :action
+  namespace :admin do
+    root :to => "home#index"
 
-  # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
+    resources :sessions, only: [:create, :destroy]
+    resources :static_pages, only: [:index, :new, :create, :edit, :update, :destroy]
+    resources :servizis
+    resources :media, only: [:index, :create, :destroy]
+    resource  :home
 
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
+    match '/main',      to: 'home#main'
+    match '/signin',    to: "sessions#new"
+    match '/signout',   to: "sessions#destroy", via: :delete
 
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
+    match '/static_pages/addmoduli/:id',    to: "static_pages#addmoduli"
+    match '/static_pages/savemoduli',   to: "static_pages#savemoduli", via: :post
+    match '/static_pages/updateorder',      to: "static_pages#updateorder"
 
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
 
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
+    match '/servizis/deleteall',  to: "servizis#deleteall", via: :post
 
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+    # custom routes for mods management
+    # category and sub-category management
+    match '/mods',                to: "mods#index"
+    match '/mods/addcat',         to: "mods#addcat"
+    match '/mods/createcat',      to: "mods#createcat",     via: :post
+    match '/mods/editcat',        to: "mods#editcat"
+    match '/mods/updatecat',      to: "mods#updatecat",     via: :post
+    match '/mods/destroycat',     to: "mods#destroycat",    via: :delete
+    match '/mods/deleteallcat',   to: "mods#deleteallcat",  via: :post
+    match '/mods/publishedcat',   to: "mods#publishedcat"
 
-  # You can have the root of your site routed with "root"
-  # just remember to delete public/index.html.
-  # root :to => 'welcome#index'
+    # leaf management
+    match '/mods/list',             to: "mods#list"
+    match '/mods/addele',           to: "mods#addele"
+    match '/mods/createele',        to: "mods#createele",         via: :post
+    match '/mods/editele',          to: "mods#editele"
+    match '/mods/updateele',        to: "mods#updateele",         via: :post
+    match '/mods/destroyele',       to: "mods#destroyele",        via: :delete
+    match '/mods/deleteallele',     to: "mods#deleteallele",      via: :post
+    match '/mods/associafile',      to: "mods#associafile",       via: :post
+    match '/mods/destroyimages',    to: "mods#destroyimages",     via: :post
+    match '/mods/destroyallimages', to: "mods#destroyallimages",  via: :delete
+    match '/mods/publishedele',     to: "mods#publishedele"
+    match '/mods/updateorderele',   to: "mods#updateorderele",    via: :post
 
-  # See how all your routes lay out with "rake routes"
+    #media management
+    match '/media/destroyall',    to: "media#destroyall",   via: :post
+  end
 
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id))(.:format)'
 end

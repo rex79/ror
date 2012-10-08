@@ -1,0 +1,120 @@
+<div class="span3">
+  <h3 style="text-align:right;margin-bottom:5px;">Gestione Immagini</h3>
+  <ul class="nav nav-tabs nav-stacked">
+    <% if @ele.nil? %>
+      <li><a href="#">Salva prima il contenuto dell'elemento per poi potergli associare le immagini</a></li>
+    <% else %>
+      <li>
+      	<a href="#" id="sel-file">Seleziona i file da associare all'elemento</a>
+      	<br/>
+      	<ul class="thumbnails" id="file-box">
+      		<% @ele.upload.each do |up| %>
+	      		<li class="span3">
+	      			<a rel="popover" href="#" id="upload-<%= up.id %>" data-content='<%= image_tag up.filename_url(:macro) %>'>
+		      			<div class="thumbnail">
+		      				<%= image_tag up.filename_url(:micro)%>
+		      				<br>
+	  							<input type="checkbox" name="rimuovi" id="remove-<%= up.id %>" value="<%= up.id %>" />
+		      			</div>
+		      		</a>
+	      		</li>
+      		<% end %>
+      	</ul>
+      </li>
+    <% end %>
+    <% if !@ele.nil? && @ele.upload.count > 0 %>
+      <li>
+      	<a href="#" id="elimina-immagini">Elimina immagini selezionate</a>
+        <%= link_to raw("Elimina tutte le immagini"), "/admin/mods/destroyallimages?idserv=#{@servizio.id}&idc=#{@ele.fkcat}&id=#{@ele.id}", method: :delete, data: { confirm: "Sei sicuro di voler eliminare tutte le immagini?" }  %>
+      </li>
+    <% end %>
+ 	</ul>
+</div>
+
+<!--
+  MODAL DIALOG FOR FILES LIST
+-->
+<div class="modal hide fade" id="media-modal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4>File caricati nel sistema</h4>
+  </div>
+  <div class="modal-body">
+    <p>
+      Seleziona i file che desideri associare
+      <br/>
+      <ul class="thumbnails">
+        <% @upload.each do |file| %>
+        <li class="span2">
+          <div class="thumbnail">
+            <%= image_tag file.filename_url(:micro), :class => "img-polaroid" %>
+            <br>
+            <% check = "" %>
+            <% if !@m_array.nil? && (@m_array.include? file.id) %>
+              <% check = "checked='checked'" %>
+            <% end %>
+            <input type="checkbox" <%= check %> name="rimuovi" id="modal-<%= file.id %>" value="<%= file.id %>" />
+          </div>
+        </li>
+        <% end %>
+      </ul>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+    <a href="#" class="btn btn-primary" id="associa-file">Associa file</a>
+  </div>
+</div>
+<!--
+  END MODAL DIALOG FOR FILES LIST
+-->
+
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		$("#media-modal").modal('hide');
+
+		$("#sel-file").click(function() {
+			$("#media-modal").modal('show')
+		});	
+
+		$("a[id^='upload-']").popover({
+  		animation: true,
+  		placement: 'left',
+  		trigger: 'hover'
+  	});
+
+		$("#associa-file").click(function() {
+			var add_elements = new Array();
+      var result = $("input[id^='modal-']").each(function(){
+        if ( $(this).is(":checked") ) {
+          add_elements.push($(this).val());
+        }
+      });
+      var string_result = add_elements.join(",");
+      
+      $.post("/admin/mods/associafile", {"id": ""+ string_result +"", "ide": "<%= @ele.id unless @ele.nil? %>"}, function(txt) {
+      	$("#file-box").html(txt.txt);
+        $("#media-modal").modal('hide');
+      });
+		});
+
+    $("#elimina-immagini").click(function() {
+      if (window.confirm("Eliminare le immagini selezionate?")) {
+        var add_elements = new Array();
+        var result = $("input[id^='remove-']").each(function(){
+          if ( $(this).is(":checked") ) {
+            add_elements.push($(this).val());
+          }
+        });
+        var string_result = add_elements.join(",");
+        
+        $.post("/admin/mods/destroyimages", {"id": ""+ string_result +"", "ide": "<%= @ele.id unless @ele.nil? %>"}, function(txt) {
+          document.location = "/admin/mods/editele?idserv=<%= @servizio.id %>&idc=<%= @ele.fkcat  unless @ele.nil? %>&id=<%= @ele.id  unless @ele.nil? %>"
+        });
+      }
+    });
+
+
+	}); 
+</script>

@@ -1,0 +1,34 @@
+gen:
+-
+    label: Data evento
+    label_class: control-label
+    nome: data_evento
+    id: data_evento
+    class: input-xlarge
+    type: text
+    str: <input type='text' class='%s date' id='%s' name='%s' value='%s' >
+sml:
+  -
+    label: Titolo (%s)
+    label_class: control-label
+    nome: title
+    id: title
+    class: input-xlarge
+    type: text
+    str: <input type='text' class='%s' id='%s' name='%s' value='%s' >
+  -
+    label: Abstract (%s)
+    label_class: control-label
+    nome: abstract
+    id: abstract
+    class: input-xlarge
+    type: text
+    str: <textarea class='%s' id='%s' name='%s' >%s</textarea>
+  -
+    label: Descrizione (%s)
+    label_class: control-label
+    nome: description
+    id: description
+    class: input-xlarge editor
+    type: text
+    str: <textarea class='%s' id='%s' name='%s' >%s</textarea>

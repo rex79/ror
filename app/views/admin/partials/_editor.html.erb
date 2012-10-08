@@ -1,0 +1,97 @@
+<!--
+  MODAL DIALOG FOR FILES LIST
+-->
+<div class="modal hide fade" id="upload-modal">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4>File caricati nel sistema</h4>
+  </div>
+  <div class="modal-body">
+    <p>
+      Clicca su di un file qui sotto per caricarlo nell'editor
+      <br/>
+      <ul class="thumbnails">
+        <% @upload.each do |file| %>
+        <li class="span2">
+          <a href="#" id="image-<%= file.id %>" rel='http://localhost:3000/<%= file.filename %>'>
+            <div class="thumbnail">
+              <%= image_tag file.filename_url(:micro), :class => "img-polaroid" %>
+            </div>
+          </a>
+        </li>
+        <% end %>
+      </ul>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <input type="hidden" id="source-editor" />
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+  </div>
+</div>
+<!--
+  END MODAL DIALOG FOR FILES LIST
+-->
+
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#upload-modal").modal('hide')
+
+	  $("a[id^='image-']").click(function() {
+	    var editor = $( "#"+$("#source-editor").val() ).data("kendoEditor")
+	    editor.paste('<img src="'+ $(this).attr("rel") +'" />' )
+	    $("#upload-modal").modal('hide')
+	  });
+
+		editor_tools = [
+			"bold",
+			"italic",
+			"underline",
+			"fontName",
+			"fontSize",
+			"foreColor",
+			"backColor",
+			"justifyLeft",
+			"justifyCenter",
+			"justifyRight",
+			"justifyFull",
+			"insertUnorderedList",
+			"insertOrderedList",
+			"indent",
+			"outdent",
+			"formatBlock",
+			"createLink",
+			"unlink",
+			"viewHtml",
+			{
+				name: "selectImage",
+				icon: "insertImage",
+				tooltip: "Seleziona una immagine da quelle precedentemente caricate",
+				exec: function (e) {
+					$("#source-editor").val($(this).attr("id"));
+					$("#upload-modal").modal('show');
+				}
+			}
+    ]
+
+		$(".editor").kendoEditor({
+			encoded:false,
+			tools: editor_tools,
+		});
+
+		$(".date").kendoDatePicker({
+			format: "dd/MM/yyyy",
+			culture: "it-IT"
+		});
+
+	});	
+</script>
+
+<style type="text/css">
+	.k-selectImage {
+  	background: transparent url(<%= asset_path 'Metro/sprite.png' %>) no-repeat -116px -88px;
+  }
+  .date {
+  	height:35px;
+  }
+</style>

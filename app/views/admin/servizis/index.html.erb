@@ -1,0 +1,61 @@
+
+<ul class="breadcrumb">
+  <li>
+    <%= link_to "Servizi", admin_servizis_path %><span class="divider"></span>
+  </li>
+</ul>
+
+<%#= breadcrumb(@servizio.id, @id_parent) %>
+<%#= link_to raw("Aggiungi <i class='icon-plus-sign icon-white'></i>"), new_admin_static_page_path, class: "btn btn-small btn-primary new-button" %>
+
+<div class="row-fluid">
+  <div class="span9">
+    <h3 style="text-align:right;margin-bottom:5px;">Elenco Servizi</h3>
+    <table class="table table-striped table-bordered table-condensed admin-table">
+      <thead>
+        <th width="5%">#</th>
+        <th width="75%">Servizio</th>
+        <th width="10%">Operazioni</th>
+      </thead>
+      <tbody>
+        <% @servizi.each do |pagina| %>
+        <tr>
+          <td style="text-align:center"><input type="checkbox" name="del[<%= pagina.id %>]" value="<%= pagina.id %>"></td>
+          <td><%= pagina.label %></td>
+          <td style="text-align:center">
+            <%= link_to raw("<i class='icon-list-alt'></i>"), edit_admin_servizi_path(pagina), :rel => "operazioni_#{pagina.id}", :title => "Modifica #{pagina.label}" %>
+            <%= link_to raw("<i class='icon-remove'></i>"), admin_servizi_path(pagina), :rel => "operazioni_#{pagina.id}", :title => "Elimina #{pagina.label}", method: :delete, data: { confirm: "Sei sicuro di voler eliminare #{pagina.label}?" }  %>
+          </td>
+        </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="span3">
+    <h3 style="text-align:right;margin-bottom:5px;">Gestione Servizi</h3>
+    <ul class="nav nav-tabs nav-stacked">
+      <li><%= link_to raw("<i class='icon-plus'></i> Aggiungi servizio"), new_admin_servizi_path %></li>
+      <li><%= link_to raw("<i class='icon-remove'></i> Elimina selezionati"), "#", :id => "del-selected" %></li>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("a[rel^='operazioni']").tooltip({'placement':'left'});
+
+
+    $("#del-selected").click(function() {
+      if (window.confirm("Eliminare tutti i servizi selezionati?")) {
+        var delete_elements = new Array();
+        var result = $('input').each(function(){
+          delete_elements.push($(this).val());
+        });
+        var string_result = delete_elements.join(",");
+
+        $.post("/admin/servizis/deleteall", { id: ""+ string_result +""}, function(txt) {
+          document.location = "/admin/servizis";
+        });
+      }
+    });
+  });
+</script>

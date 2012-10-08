@@ -1,0 +1,23 @@
+<div class="span3">
+  <h3 style="text-align:right;margin-bottom:5px;">Gestione Moduli</h3>
+  <ul class="nav nav-tabs nav-stacked">
+    <li>
+    	<a href="#" id="sel-file">Seleziona i moduli da associare alla pagina statica</a>
+    </li>
+		<% rel_cat_arr = @static.related_cat.split(",") unless @static.related_cat.nil? %>
+    <% @sel_cat.each do |cat| %>
+      <li>
+        <a href="#">
+          <label class="checkbox">
+            <input type="checkbox" <%= "checked" if rel_cat_arr && rel_cat_arr.include?(cat[1].to_s) %> name="moduli[<%= cat[1] %>]" value="<%= cat[1] %>" />&nbsp;<%= cat[0] %>
+          </label>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+	}); 
+</script>

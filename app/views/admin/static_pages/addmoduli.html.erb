@@ -1,0 +1,20 @@
+<div class="row-fluid">
+	<div class="span12">
+		<h2>Seleziona i moduli da associare alla pagina <strong>"<%= @pagina.sml.where("fklang=?", "it").first.title %>"</strong></h2>
+	</div>
+
+	<form action="/admin/static_pages/savemoduli" class="form-horizontal" method="post">
+		<input type="hidden" name="id" value="<%= @pagina.id %>">
+		<div class="span12">
+			<% rel_cat_arr = @pagina.related_cat.split(",") unless @pagina.related_cat.nil? %>
+			<% @sel_cat.each do |cat| %>
+				<div class="span4">
+					<input type="checkbox" <%= "checked" if rel_cat_arr && rel_cat_arr.include?(cat[1].to_s) %> name="moduli[<%= cat[1] %>]" value="<%= cat[1] %>" class="checkbox" />&nbsp;<%= cat[0] %>
+				</div>
+			<% end %>
+		</div>
+		<div class="span12" style="text-align:right;margin-top:30px;">
+			<input type="submit" class="btn btn-default" value="Salva Associazioni">
+		</div>
+	</form>
+</div>

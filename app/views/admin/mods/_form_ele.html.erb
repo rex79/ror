@@ -1,0 +1,75 @@
+<%= f.hidden_field :fkcat, :value => @cat.id %>
+<%= f.hidden_field :idserv, :value => @servizio.id %>
+<div class="row-fluid">
+  <div class="span9">
+
+    <% if @fields['gen'] %>
+      <% @fields['gen'].each do |field| %>
+        <div class="control-group">
+          <label for="<%= field['nome'] %>" class="<%= field['label_class'] %>"><%= field['label'] %></label>
+          <div class="controls">
+            <% value = @ele.send field['nome'] unless @ele.nil? %>
+            <% checked = "checked" if value.eql?("1") %>
+            <% if field['type'] == "text" %>
+              <%= raw(field['str'] % [ field['class'], field['id'], "mods[#{field['nome']}]",  "#{value}" ]) %>
+            <% elsif field['type'] == "checkbox" %>
+              <%= raw(field['str'] % [ field['class'], field['id'], "mods[#{field['nome']}]",  "1", checked ]) %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <ul id="tabs" class="nav nav-tabs">
+    	<% @lingue.each do |lingua| %>
+    		<li class="<%= "active" if lingua.cod.eql?('it') %>"><a href="#<%= lingua.cod %>"><%= lingua.lingua %></a></li>
+    	<% end %>
+    </ul>
+    <div class="tab-content">
+    	<% @lingue.each do |lingua| %>
+
+    		<% ele = @sml[lingua.cod] %>
+
+    		<% @fields['sml'].each do |field| %>
+          <div class="control-group">
+            <label for="<%= field['nome'] %>" class="<%= field['label_class'] %>"><%= field['label'] % lingua.cod %></label>
+            <div class="controls">
+              <% unless ele.nil? %>
+                <% value = ele.send field['nome'] unless ele.nil? %>
+              <% end %>
+
+              <% if field['type'] == "text" %>
+                <%= raw(field['str'] % [ field['class'], field['id'], "#{lingua.cod}[#{field['nome']}]", "#{value}"]) %>
+              <% elsif field['type'] == "checkbox" %>
+                <%= raw(field['str'] % [ field['class'], field['id'], "#{lingua.cod}[#{field['nome']}]", "#{value}", "" ]) %>
+              <% end %>
+
+
+              <% if field['str1'] %>
+                <%= raw(field['str1'] % [ field['class'], field['id'], "#{lingua.cod}[#{field['nome']}]", "#{value}"]) %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+    	<% end %>
+    </div>
+  </div>
+  
+  <%= render 'admin/partials/media_manager' %>
+
+</div>
+
+
+ <%= render 'admin/partials/editor' %>
+
+
+<script type="text/javascript">
+
+$(window).ready(function() {
+	$('#tabs a').click(function (e) {
+  	e.preventDefault();
+  	$(this).tab('show');	
+	});
+
+});
+</script>

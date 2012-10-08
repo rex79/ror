@@ -1,0 +1,34 @@
+<div class="row-fluid">
+  <header class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <%= link_to "Admin", '/admin', id: "logo" %>
+        <nav>
+          <ul class="nav pull-right">
+            <li><%= link_to "Home", admin_root_path %></li>
+            <% if signed_in? %>
+              <li><%= link_to "Pagine statiche", admin_static_pages_path %></li>
+              <li><%= link_to "Gestione Media", admin_media_path %></li>
+              <li class="dropdown" id="menu-servizi">
+                <a href="#menu-servizi" class="dropdown-toggle" data-toggle="dropdown" >
+                  <i class="icon-wrench"></i>Gestione Servizi
+                  <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <% if administrator? %>
+                    <li><%= link_to "Servizi", admin_servizis_path %></li>
+                    <li class="divider"></li>
+                  <% end %>
+                  <% @all_servizi.each do |servizio| %>
+                    <li><%= link_to servizio.label, servizio.path %></li>
+                  <% end %>
+                </ul>
+              </li>
+              <li><%= link_to "Logout", admin_signout_path, method: "delete" %></li>
+            <% end %>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+</div>
